@@ -7,7 +7,8 @@ import matplotlib.pylab as plt
 import pyautogui
 
 threshold = 0.8
-target_img = "wifi.png"
+app_name = "com.android.settings"
+target_img = "gallery.png"
 screen_size = (800, 600)
 
 # Connect to the device
@@ -15,18 +16,19 @@ d = u2.connect()
 
 pcrd_running = False
 
-# Main loop to wait for the app to be in the foreground
-while True:
-    if d.app_wait("com.android.settings", front=True, timeout=1):
-        if not pcrd_running:
-            time.sleep(2)  # Wait before continuing
-        pcrd_running = True
-        break
-    else:
-        # Launch the app if it's not running
-        d.session("com.android.settings")
-        pcrd_running = False
-        continue
+def launch_app(app_name):
+    # Main loop to wait for the app to be in the foreground
+    while True:
+        if d.app_wait(app_name, front=True, timeout=1):
+            if not pcrd_running:
+                time.sleep(2)  # Wait before continuing
+            pcrd_running = True
+            break
+        else:
+            # Launch the app if it's not running
+            d.session(app_name)
+            pcrd_running = False
+            continue
 
 def detect_image(img_path, threshold=threshold, new_size=screen_size):
     screen_shot = d.screenshot(format="opencv")
@@ -68,6 +70,7 @@ def detect_image(img_path, threshold=threshold, new_size=screen_size):
         cv2.waitKey(0)
         cv2.destroyAllWindows()
         return True
+    
     else:
         print("Image not detected.")
         return False
@@ -82,14 +85,6 @@ def detect_image2(img_path, threshold=threshold):
     # Read the target image
     target_image = cv2.imread(img_path, cv2.IMREAD_COLOR)
     target_image = cv2.cvtColor(target_image, cv2.COLOR_RGB2BGR)
-
-    # cv2.imshow('Detected Image', screen_shot)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-
-    # cv2.imshow('Detected Image', target_image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
     
     # Get the width and height of the target image
     h, w, _ = target_image.shape
@@ -124,10 +119,12 @@ def detect_image2(img_path, threshold=threshold):
                 d.click(center_x, center_y)
 
                 # Show the result with the highlighted area
-                cv2.imshow('Detected Image', screen_shot)
-                cv2.waitKey(0)
-                cv2.destroyAllWindows()
-                break  # Break if a match is found
+                # cv2.imshow('Detected Image', screen_shot)
+                # cv2.waitKey(0)
+                # cv2.destroyAllWindows()
+
+                # break  # Break if a match is found
+                return True
 
     if not detected:
         print("Image not detected.")
@@ -168,5 +165,7 @@ def detect_image_on_screen(image_path, threshold=threshold):
     else:
         print("Image not detected.")
         return False
+
+# launch_app(app_name)
 
 detect_image2(target_img)
