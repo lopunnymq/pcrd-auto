@@ -1,13 +1,21 @@
 import cv2
 import numpy as np
 
-def read_img(img_path):
-    img = cv2.imdecode(np.fromfile(img_path, dtype = np.uint8), -1)
-    return img
+def read_img(img):
+    return cv2.imread(img, cv2.IMREAD_COLOR)
 
-# def rotate_screen_to_landscape:
+# Rotate the screen if in portrait mode
+def rotate_screen_to_landscape(device):
+    orientation = device.orientation
 
+    if orientation == "natural":
+        device.set_orientation("l")
 
 class UIDetecter:
+
     @staticmethod
-    def find_img(screen_shot, img_paths):
+    def detect_imgs(screen_shot, imgs):
+        # Range the images
+        for img in imgs:
+            # Read the image to detect
+            t = read_img(img)
