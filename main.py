@@ -30,6 +30,16 @@ def launch_app(app_name):
             pcrd_running = False
             continue
 
+def read_img(img):
+    return cv2.imread(img, cv2.IMREAD_COLOR)
+
+# Rotate the screen if in portrait mode
+def rotate_screen_to_landscape():
+    orientation = d.orientation
+
+    if orientation == "natural":
+        d.set_orientation("l")
+
 def detect_image(img_path, threshold=threshold, new_size=screen_size):
     screen_shot = d.screenshot(format="opencv")
 
@@ -48,7 +58,7 @@ def detect_image(img_path, threshold=threshold, new_size=screen_size):
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
 
-    # Read the image you want to detect
+    # Read the image to detect
     target_image = cv2.imread(img_path, cv2.IMREAD_COLOR)
     
     # Get the width and height of the target image
@@ -83,7 +93,7 @@ def detect_image2(img_path, threshold=threshold):
     screen_shot = cv2.cvtColor(screen_shot, cv2.COLOR_RGB2BGR)
 
     # Read the target image
-    target_image = cv2.imread(img_path, cv2.IMREAD_COLOR)
+    target_image = read_img(img_path)
     target_image = cv2.cvtColor(target_image, cv2.COLOR_RGB2BGR)
     
     # Get the width and height of the target image
