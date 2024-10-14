@@ -3,8 +3,6 @@ import numpy as np
 
 threshold = 0.8
 
-
-
 class UIDetecter:
 
     @staticmethod
