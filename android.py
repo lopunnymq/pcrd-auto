@@ -10,11 +10,25 @@ threshold = 0.8
 app_name = "com.android.settings"
 target_img = "gallery.png"
 screen_size = (800, 600)
+pcrd_running = False
 
 # Connect to the device
 d = u2.connect()
 
-pcrd_running = False
+# Press the home button to ensure on the home screen
+d.press("home")
+
+# Get the device screen size
+screen_width, screen_height = d.window_size()
+
+# Swipe from the bottom to the top to open the apps menu
+start_x = screen_width // 2
+start_y = int(screen_height * 0.85)
+end_x = screen_width // 2
+end_y = int(screen_height * 0.4)
+
+# Perform the swipe
+d.swipe(start_x, start_y, end_x, end_y, duration=0.1)
 
 def launch_app(app_name):
     # Main loop to wait for the app to be in the foreground
