@@ -5,6 +5,8 @@ import numpy as np
 import os
 import matplotlib.pylab as plt
 import pyautogui
+import pytesseract
+from PIL import Image
 
 threshold = 0.8
 app_name = "com.android.settings"
@@ -15,20 +17,21 @@ pcrd_running = False
 # Connect to the device
 d = u2.connect()
 
-# Press the home button to ensure on the home screen
-d.press("home")
+def launch_menu():
+    # Press the home button to ensure on the home screen
+    d.press("home")
 
-# Get the device screen size
-screen_width, screen_height = d.window_size()
+    # Get the device screen size
+    screen_width, screen_height = d.window_size()
 
-# Swipe from the bottom to the top to open the apps menu
-start_x = screen_width // 2
-start_y = int(screen_height * 0.85)
-end_x = screen_width // 2
-end_y = int(screen_height * 0.4)
+    # Swipe from the bottom to the top to open the apps menu
+    start_x = screen_width // 2
+    start_y = int(screen_height * 0.85)
+    end_x = screen_width // 2
+    end_y = int(screen_height * 0.4)
 
-# Perform the swipe
-d.swipe(start_x, start_y, end_x, end_y, duration=0.1)
+    # Perform the swipe
+    d.swipe(start_x, start_y, end_x, end_y, duration=0.1)
 
 def launch_app(app_name):
     # Main loop to wait for the app to be in the foreground
@@ -43,6 +46,27 @@ def launch_app(app_name):
             d.session(app_name)
             pcrd_running = False
             continue
+
+def detect_text():
+    # Take a screenshot
+    screenshot_path = 'screenshot.png'
+    d.screenshot(screenshot_path)
+
+    # Check if the file exists before trying to open it
+    if not os.path.exists(screenshot_path):
+        print(f"File does not exist: {screenshot_path}")
+        return
+
+    # Open the screenshot image
+    try:
+        image = Image.open(screenshot_path)
+    except PermissionError as e:
+        print(f"Permission error: {e}")
+        return
+
+    # Detect text with bounding boxes
+    boxes = pytesseract.image_to_boxes(image)
+    print("Detected text boxes: ", boxes)
 
 def read_img(img):
     return cv2.imread(img, cv2.IMREAD_COLOR)
@@ -192,4 +216,8 @@ def detect_image_on_screen(image_path, threshold=threshold):
 
 # launch_app(app_name)
 
-detect_image2(target_img)
+# detect_image2(target_img)
+
+# detect_text()
+
+launch_menu()
